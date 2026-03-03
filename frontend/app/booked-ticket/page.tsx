@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { fetchApi } from "@/lib/services/api";
+import { formatCurrency, formatDate } from "@/lib/helpers/formatters";
+import { API_ENDPOINTS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,7 +53,7 @@ export default function BookedTicketPage() {
 
     try {
       const result = await fetchApi<BookedTicketDetailResponse>(
-        `/get-booked-ticket/${bookedTicketId}`,
+        `${API_ENDPOINTS.GET_BOOKED_TICKET}/${bookedTicketId}`,
       );
       setData(result);
     } catch (err: unknown) {
@@ -108,13 +110,7 @@ export default function BookedTicketPage() {
                 </div>
                 <div>
                   <p className="text-neutral-500">Tanggal Booking</p>
-                  <p className="font-medium">
-                    {new Date(data.bookedDate).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
+                  <p className="font-medium">{formatDate(data.bookedDate)}</p>
                 </div>
               </div>
             </CardContent>
@@ -149,10 +145,10 @@ export default function BookedTicketPage() {
                           {ticket.qty}
                         </TableCell>
                         <TableCell className="text-right">
-                          Rp {ticket.price.toLocaleString("id-ID")}
+                          {formatCurrency(ticket.price)}
                         </TableCell>
                         <TableCell className="text-right">
-                          Rp {ticket.subTotal.toLocaleString("id-ID")}
+                          {formatCurrency(ticket.subTotal)}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -161,7 +157,7 @@ export default function BookedTicketPage() {
                         Total Kategori
                       </TableCell>
                       <TableCell className="text-right font-medium">
-                        Rp {category.categoryTotal.toLocaleString("id-ID")}
+                        {formatCurrency(category.categoryTotal)}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -175,7 +171,7 @@ export default function BookedTicketPage() {
               <div className="flex justify-between items-center">
                 <p className="font-semibold">Grand Total</p>
                 <p className="text-xl font-semibold">
-                  Rp {data.grandTotal.toLocaleString("id-ID")}
+                  {formatCurrency(data.grandTotal)}
                 </p>
               </div>
             </CardContent>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { fetchApi } from "@/lib/services/api";
+import { formatCurrency, formatDate } from "@/lib/helpers/formatters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,10 +50,12 @@ export default function BookTicketPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // tambah row baru
   const addRow = () => {
     setTickets([...tickets, { kodeTicket: "", qty: "" }]);
   };
 
+  // remove tapi minimal 1 row harus tetap ada
   const removeRow = (index: number) => {
     if (tickets.length <= 1) return;
     setTickets(tickets.filter((_, i) => i !== index));
@@ -85,12 +88,20 @@ export default function BookTicketPage() {
         method: "POST",
         body: JSON.stringify(body),
       });
-
       setResult(response);
+      // reset form
       setTickets([{ kodeTicket: "", qty: "" }]);
-    } catch (err: unknown) {
-      const error = err as { title?: string; detail?: string };
-      setError(error.detail || error.title || "Gagal melakukan booking.");
+    } catch (err) {
+      if (err && typeof err === "object") {
+        const apiError = err as { title?: string; detail?: string };
+        setError(
+          apiError.detail ||
+            apiError.title ||
+            "Booking gagal. Pastikan kode tiket dan quantity sudah benar.",
+        );
+      } else {
+        setError("Terjadi kesalahan yang tidak diketahui.");
+      }
     } finally {
       setLoading(false);
     }
@@ -181,13 +192,7 @@ export default function BookTicketPage() {
                 </div>
                 <div>
                   <p className="text-neutral-500">Tanggal Booking</p>
-                  <p className="font-medium">
-                    {new Date(result.bookedDate).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
+                  <p className="font-medium">{formatDate(result.bookedDate)}</p>
                 </div>
               </div>
             </CardContent>
@@ -222,10 +227,10 @@ export default function BookTicketPage() {
                           {ticket.qty}
                         </TableCell>
                         <TableCell className="text-right">
-                          Rp {ticket.price.toLocaleString("id-ID")}
+                          {formatCurrency(ticket.price)}
                         </TableCell>
                         <TableCell className="text-right">
-                          Rp {ticket.subTotal.toLocaleString("id-ID")}
+                          {formatCurrency(ticket.subTotal)}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -234,7 +239,7 @@ export default function BookTicketPage() {
                         Total Kategori
                       </TableCell>
                       <TableCell className="text-right font-medium">
-                        Rp {category.categoryTotal.toLocaleString("id-ID")}
+                        {formatCurrency(category.categoryTotal)}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -248,7 +253,7 @@ export default function BookTicketPage() {
               <div className="flex justify-between items-center">
                 <p className="font-semibold">Grand Total</p>
                 <p className="text-xl font-semibold">
-                  Rp {result.grandTotal.toLocaleString("id-ID")}
+                  {formatCurrency(result.grandTotal)}
                 </p>
               </div>
             </CardContent>

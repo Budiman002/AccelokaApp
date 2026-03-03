@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { fetchApi } from "@/lib/services/api";
+import { formatCurrency, formatDate } from "@/lib/helpers/formatters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+// Data tiket dari API
 interface Ticket {
   id: number;
   code: string;
@@ -25,6 +27,7 @@ interface Ticket {
   quota: number;
 }
 
+// Response dari API get-available-ticket
 interface AvailableTicketsResponse {
   tickets: Ticket[];
   totalCount: number;
@@ -69,10 +72,13 @@ export default function AvailableTicketsPage() {
       const result = await fetchApi<AvailableTicketsResponse>(endpoint);
       setData(result);
     } catch (err: unknown) {
-      const error = err as { title?: string; detail?: string };
-      setError(
-        error.detail || error.title || "Terjadi kesalahan saat mengambil data.",
-      );
+      // Error handling
+      const apiError = err as { title?: string; detail?: string };
+      const errorMessage =
+        apiError.detail ||
+        apiError.title ||
+        "Gagal mengambil data tiket. Coba lagi nanti.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -218,18 +224,9 @@ export default function AvailableTicketsPage() {
                       <TableCell className="font-mono">{ticket.code}</TableCell>
                       <TableCell>{ticket.name}</TableCell>
                       <TableCell>{ticket.category}</TableCell>
-                      <TableCell>
-                        {new Date(ticket.eventDate).toLocaleDateString(
-                          "id-ID",
-                          {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          },
-                        )}
-                      </TableCell>
+                      <TableCell>{formatDate(ticket.eventDate)}</TableCell>
                       <TableCell className="text-right">
-                        Rp {ticket.price.toLocaleString("id-ID")}
+                        {formatCurrency(ticket.price)}
                       </TableCell>
                       <TableCell className="text-right">
                         {ticket.quota}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { fetchApi } from "@/lib/services/api";
+import { API_ENDPOINTS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +34,7 @@ export default function RevokeTicketPage() {
 
     try {
       const response = await fetchApi<RevokeTicketResponse>(
-        `/revoke-ticket/${form.bookedTicketId}/${form.ticketCode}/${form.quantity}`,
+        `${API_ENDPOINTS.REVOKE_TICKET}/${form.bookedTicketId}/${form.ticketCode}/${form.quantity}`,
         { method: "DELETE" },
       );
       setResult(response);
@@ -46,6 +47,7 @@ export default function RevokeTicketPage() {
     }
   };
 
+  // Validasi form
   const handleSubmit = () => {
     if (!form.bookedTicketId || !form.ticketCode || !form.quantity) return;
     setShowConfirm(true);

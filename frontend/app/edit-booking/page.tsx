@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { fetchApi } from "@/lib/services/api";
+import { API_ENDPOINTS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,7 +76,7 @@ export default function EditBookingPage() {
       };
 
       const response = await fetchApi<EditBookedTicketResponse>(
-        `/edit-booked-ticket/${bookedTicketId}`,
+        `${API_ENDPOINTS.EDIT_BOOKED_TICKET}/${bookedTicketId}`,
         {
           method: "PUT",
           body: JSON.stringify(body),
