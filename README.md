@@ -51,3 +51,7 @@ Frontend berjalan di `http://localhost:3000`
 ## Author
 
 Arif Budiman
+
+## Documentation
+
+[Documentation - Exam Project AccelokaApp](https://shy-fascinator-732.notion.site/Documentation-Exam-Project-2-Frontend-313d097ad30d81ef8351eaf20e000335)
